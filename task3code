@@ -1,0 +1,30 @@
+clc;
+clear;
+close all;
+
+s = tf('s');
+
+J = 0.01;
+B = 0.1;
+Kt = 0.01;
+Kb = 0.01;
+R = 1;
+L = 0.5;
+
+motor = tf(Kt,[J*L (J*R+B*L) (B*R+Kt*Kb)]);
+
+speedPID = pid(100,200,10);
+
+positionPID = pid(50,5,1);
+
+speedLoop = feedback(speedPID*motor,1);
+
+positionLoop = feedback(positionPID*speedLoop*(1/s),1);
+
+figure;
+step(positionLoop);
+grid on;
+
+title('Cascade Position Control');
+xlabel('Time (seconds)');
+ylabel('Position');
